@@ -132,18 +132,25 @@ function middlewareCompiler(options, cb) {
                 statusCode: error.statusCode,
             };
 
-            [
-                'code',
-                'errno',
-                'error',
-                'error_description',
-                'data',
-            ].forEach(key => {
-                if (error[key]) payload[key] = error[key];
-            });
+            if (error.statusCode === 500) {
+                debuglog(
+                    'Responding with generic 500 error after: %s',
+                    error.stack || error.message || error
+                );
 
-            if (error.statusCode === 500 && error.stack) {
-                payload.stack = error.stack;
+                // Avoid leaking sensitive information. To debug, users
+                // are directed to real-time logs.
+                payload.message = 'Server error';
+            } else {
+                [
+                    'code',
+                    'errno',
+                    'error',
+                    'error_description',
+                    'data',
+                ].forEach(key => {
+                    if (error[key]) payload[key] = error[key];
+                });
             }
 
             let json;

@@ -31,9 +31,10 @@ function parseMiddlewareSpecString(spec) {
  * Resolve a middleware specification into a middleware function
  *
  * @param {string|function} spec The middleware specification or an existing middlware
+ * @param {object} options Options
  * @returns {function}
  */
-function resolveCompiler(spec) {
+function resolveCompiler(spec, req) {
     // Already a function, no resolution to do.
     if (typeof spec === 'function') return spec;
 
@@ -43,5 +44,5 @@ function resolveCompiler(spec) {
         ? module[parsedSpec.exportName]
         : module;
 
-    return parsedSpec.isFactoryFunction ? moduleExport() : moduleExport;
+    return parsedSpec.isFactoryFunction ? moduleExport(req) : moduleExport;
 }
