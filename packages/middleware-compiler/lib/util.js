@@ -1,6 +1,6 @@
 'use strict';
 
-const MIDDLEWARE_SPEC_RX = /^(@[^/(]+\/[^/(]+|[^@/(]+)(?:\/([^/(]+)(\(\))?)?$/;
+const MIDDLEWARE_SPEC_RX = /^(@[^/(]+\/[^/(]+|[^@/(]+)(?:\/([^/(]+))?$/;
 
 module.exports = {
     parseMiddlewareSpecString,
@@ -22,9 +22,8 @@ function parseMiddlewareSpecString(spec) {
 
     const moduleName = matches[1];
     const exportName = matches[2];
-    const isFactoryFunction = !!matches[3];
 
-    return { moduleName, exportName, isFactoryFunction };
+    return { moduleName, exportName };
 }
 
 /**
@@ -34,15 +33,19 @@ function parseMiddlewareSpecString(spec) {
  * @param {object} options Options
  * @returns {function}
  */
-function resolveCompiler(spec, req) {
+function resolveCompiler(spec) {
     // Already a function, no resolution to do.
     if (typeof spec === 'function') return spec;
 
     const parsedSpec = parseMiddlewareSpecString(spec);
     const module = require(parsedSpec.moduleName);
-    const moduleExport = parsedSpec.exportName
-        ? module[parsedSpec.exportName]
-        : module;
+    const middlewareFn = parsedSpec.exportName
+        ? module[parsedSpec.exportName]()
+        : module();
 
-    return parsedSpec.isFactoryFunction ? moduleExport(req) : moduleExport;
+    if (typeof middlewareFn !== 'function' || middlewareFn.length !== 3) {
+        throw new Error('A Webtask middleware must export a function that returns a function with the signature `function(req, res, next)`');
+    }
+
+    return middlewareFn;
 }

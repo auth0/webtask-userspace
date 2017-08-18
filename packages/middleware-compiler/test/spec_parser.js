@@ -15,7 +15,6 @@ describe('middleware spec parser', { parallel: true }, () => {
         const parsedSpec = Util.parseMiddlewareSpecString(spec);
 
         Assert.equal(parsedSpec.exportName, undefined);
-        Assert.equal(parsedSpec.isFactoryFunction, false);
         Assert.equal(parsedSpec.moduleName, 'body-parser');
 
         done();
@@ -26,7 +25,6 @@ describe('middleware spec parser', { parallel: true }, () => {
         const parsedSpec = Util.parseMiddlewareSpecString(spec);
 
         Assert.equal(parsedSpec.exportName, undefined);
-        Assert.equal(parsedSpec.isFactoryFunction, false);
         Assert.equal(parsedSpec.moduleName, '@sencha/connect');
 
         done();
@@ -37,18 +35,6 @@ describe('middleware spec parser', { parallel: true }, () => {
         const parsedSpec = Util.parseMiddlewareSpecString(spec);
 
         Assert.equal(parsedSpec.exportName, 'body-parser');
-        Assert.equal(parsedSpec.isFactoryFunction, false);
-        Assert.equal(parsedSpec.moduleName, '@sencha/connect');
-
-        done();
-    });
-
-    it('correctly parses a scoped module with an exported factory function', done => {
-        const spec = '@sencha/connect/body-parser()';
-        const parsedSpec = Util.parseMiddlewareSpecString(spec);
-
-        Assert.equal(parsedSpec.exportName, 'body-parser');
-        Assert.equal(parsedSpec.isFactoryFunction, true);
         Assert.equal(parsedSpec.moduleName, '@sencha/connect');
 
         done();
@@ -56,26 +42,6 @@ describe('middleware spec parser', { parallel: true }, () => {
 
     it('throws for a bare scope', done => {
         const spec = '@sencha';
-
-        Assert.throws(() => {
-            Util.parseMiddlewareSpecString(spec);
-        });
-
-        done();
-    });
-
-    it('throws for a bare scope with factory function', done => {
-        const spec = '@sencha/body-parser()';
-
-        Assert.throws(() => {
-            Util.parseMiddlewareSpecString(spec);
-        });
-
-        done();
-    });
-
-    it('throws for a bare factory function', done => {
-        const spec = 'body-parser()';
 
         Assert.throws(() => {
             Util.parseMiddlewareSpecString(spec);

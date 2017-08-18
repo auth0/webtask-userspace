@@ -101,11 +101,13 @@ describe('cron authentication middleware', { parallel: true }, () => {
 });
 
 function createMockRunner(webtaskContext = {}) {
+    const middlewareFn = CronAuthMiddleware();
+
     return function run(requestOptions, next) {
         const dispatchFn = (req, res) => {
             req.webtaskContext = webtaskContext;
 
-            return CronAuthMiddleware(req, res, next);
+            return middlewareFn(req, res, next);
         };
 
         const defaultRequestOptions = { url: '/' };
