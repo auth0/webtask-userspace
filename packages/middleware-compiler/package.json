@@ -1,0 +1,21 @@
+{
+  "name": "@webtask/middleware-compiler",
+  "version": "1.0.0-pre.0",
+  "description": "Webtask compiler that provides a configurable middleware pipeline",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "lab -vL"
+  },
+  "keywords": [],
+  "author": "Geoff Goodman (https://github.com/ggoodman)",
+  "license": "MIT",
+  "dependencies": {
+    "wreck": "^12.2.3"
+  },
+  "devDependencies": {
+    "lab": "^14.2.0"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@webtask/bearer-auth-middleware",
+  "version": "1.0.0-pre.0",
+  "description": "Webtask middleware that implements generic authentication",
+  "main": "index.js",
+  "scripts": {
+    "preversion": "npm run test",
+    "test": "lab -cvL"
+  },
+  "keywords": [],
+  "author": "Geoff Goodman (https://github.com/ggoodman)",
+  "license": "MIT",
+  "peerDependencies": {
+    "@webtask/middleware-compiler": "^1.0.0"
+  },
+  "devDependencies": {
+    "hoek": "^4.2.0",
+    "lab": "^14.2.0",
+    "shot": "^3.4.2"
+  }
+}

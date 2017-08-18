@@ -1,0 +1,25 @@
+{
+  "name": "webtask-userspace",
+  "version": "1.0.0",
+  "description": "A collection of webtask compilers, middleware and other utilities",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/auth0/webtask-userspace.git"
+  },
+  "keywords": [],
+  "author": "Geoff Goodman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/auth0/webtask-userspace/issues"
+  },
+  "homepage": "https://github.com/auth0/webtask-userspace#readme",
+  "devDependencies": {
+    "eslint": "^4.4.1",
+    "lerna": "^2.0.0"
+  }
+}
