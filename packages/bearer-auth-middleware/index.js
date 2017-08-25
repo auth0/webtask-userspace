@@ -17,8 +17,8 @@ function createAuthenticationMiddleware() {
                 return next();
             }
 
-            const error = new Error('Unauthorized extensibility point');
-            error.statusCode = 403;
+            const error = new Error('Unauthenticated extensibility point');
+            error.statusCode = 401;
 
             return next(error);
         }

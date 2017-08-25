@@ -42,7 +42,7 @@ describe('cron authentication middleware', { parallel: true }, () => {
             },
             error => {
                 Assert.ok(error);
-                Assert.equal(error.statusCode, 403);
+                Assert.equal(error.statusCode, 401);
 
                 return done();
             }
@@ -55,7 +55,7 @@ describe('cron authentication middleware', { parallel: true }, () => {
 
         return run({}, error => {
             Assert.ok(error);
-            Assert.equal(error.statusCode, 403);
+            Assert.equal(error.statusCode, 401);
 
             return done();
         });
@@ -73,7 +73,7 @@ describe('cron authentication middleware', { parallel: true }, () => {
             },
             error => {
                 Assert.ok(error);
-                Assert.equal(error.statusCode, 403);
+                Assert.equal(error.statusCode, 401);
 
                 return done();
             }
@@ -92,7 +92,7 @@ describe('cron authentication middleware', { parallel: true }, () => {
             },
             error => {
                 Assert.ok(error);
-                Assert.equal(error.statusCode, 403);
+                Assert.equal(error.statusCode, 401);
 
                 return done();
             }
