@@ -6,7 +6,8 @@ const Helpers = require('./lib/helpers');
 const Lab = require('lab');
 
 const lab = Lab.script();
-const { describe, it } = lab;
+const describe = lab.describe;
+const it = lab.it;
 
 module.exports = { lab };
 

@@ -13,33 +13,34 @@ module.exports = {
     spawnServer,
 };
 
-function createPipeline({ script, middlewareSpecs }, cb) {
+function createPipeline(options, cb) {
     const meta = {
-        'wt-middleware': middlewareSpecs.join(','),
+        'wt-middleware': options.middlewareSpecs.join(','),
     };
     const compilerOptions = {
         meta,
         nodejsCompiler,
-        script,
+        script: options.script,
     };
 
     return Compiler(compilerOptions, cb);
 }
 
-function invokePipeline(
-    webtaskFn,
-    { headers = {}, method = 'GET', payload, secrets = {}, url = '/' },
-    cb
-) {
+function invokePipeline(webtaskFn, options, cb) {
     const dispatchFn = (req, res) => {
         const webtaskContext = {
-            secrets,
             headers: req.headers,
+            secrets: options.secrets || {},
         };
 
         return webtaskFn(webtaskContext, req, res);
     };
-    const requestOptions = { headers, method, payload, url };
+    const requestOptions = {
+        headers: options.headers || {},
+        method: options.method || 'GET',
+        payload: options.payload,
+        url: options.url || '/',
+    };
 
     return Shot.inject(dispatchFn, requestOptions, cb);
 }

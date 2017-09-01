@@ -6,7 +6,8 @@ const Lab = require('lab');
 const Util = require('../lib/util');
 
 const lab = Lab.script();
-const { describe, it } = lab;
+const describe = lab.describe;
+const it = lab.it;
 
 module.exports = { lab };
 

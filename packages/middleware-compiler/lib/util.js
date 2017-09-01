@@ -39,7 +39,10 @@ function parseMiddlewareSpecString(spec) {
  * @param {object} options Options
  * @returns {function}
  */
-function resolveMiddlewareFunction(spec, { debuglog, nodejsCompiler }, cb) {
+function resolveMiddlewareFunction(spec, options, cb) {
+    const debuglog = options.debuglog;
+    const nodejsCompiler = options.nodejsCompiler;
+
     // Already a function, no resolution to do.
     if (typeof spec !== 'string') {
         return process.nextTick(cb, new Error('Unexpected spec type'));
@@ -62,7 +65,9 @@ function resolveMiddlewareFunction(spec, { debuglog, nodejsCompiler }, cb) {
  * @param {object} options Options
  * @param {function} cb Callback
  */
-function resolveNpmMiddlewareFunction(spec, { debuglog }, cb) {
+function resolveNpmMiddlewareFunction(spec, options, cb) {
+    const debuglog = options.debuglog;
+
     debuglog('resolving an npm module middleware "%s"'.spec);
 
     try {
@@ -89,7 +94,10 @@ function resolveNpmMiddlewareFunction(spec, { debuglog }, cb) {
  * @param {object} options Options
  * @param {function} cb Callback
  */
-function resolveUrlMiddlewareFunction(url, { debuglog, nodejsCompiler }, cb) {
+function resolveUrlMiddlewareFunction(url, options, cb) {
+    const debuglog = options.debuglog;
+    const nodejsCompiler = options.nodejsCompiler;
+
     if (!Wreck) Wreck = require('wreck');
 
     const wreckOptions = {

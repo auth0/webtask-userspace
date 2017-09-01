@@ -8,7 +8,8 @@ const Lab = require('lab');
 const Shot = require('shot');
 
 const lab = Lab.script();
-const { describe, it } = lab;
+const describe = lab.describe;
+const it = lab.it;
 
 module.exports = { lab };
 
@@ -110,7 +111,9 @@ describe('cron authentication middleware', { parallel: false }, () => {
     });
 });
 
-function createMockRunner(webtaskContext = {}) {
+function createMockRunner(webtaskContext) {
+    if (!webtaskContext) webtaskContext = {};
+
     const middlewareFn = AuthMiddleware();
 
     return function run(requestOptions, next) {
