@@ -16,7 +16,10 @@ Webtask middleware are disigned in a [connect](https://github.com/senchalabs/con
 
 2. Set the `wt-compiler` metadata property on your webtask to `@webtask/middleware-compiler`.
 
-3. *Optionally*, set the `wt-middleware` metadata property to a comma-separated list of middleware references. These references can be the name of an npm module, in which case the module's default export is used. These can also be references like `module_name/name_of_export_function`, which would be equivalent to `require('module_name').name_of_export_function`. These middleware will be invoked sequentially and the next middleware will only be invoked if the previous middleware calls `next()` without argument.
+3. *Optionally*, set the `wt-middleware` metadata property to a comma-separated list of middleware references. Middleware references can be any combination of:
+    - `module_name` - The name of an npm module, in which case the module's default export is used. This would be equivalent to `require('module_name')`.
+    - `module_name/name_of_export_function` - The name of an npm module with the name of the desired export. This wouldbe equivalent to `require('module_name').name_of_export_function`.
+    - `http(s)://url.of/a/file/exporting/a/middleware.js` - A publicly accessible url from which the middleware's code will be downloaded and evaluated. The code must export a suitable middleware factory function as the default export.
 
 3. *Optionally*, set the `wt-debug` metadata property to a comma-separated list of debug references that contains `wt-middleware`. This will result in additional debug information being sent to real-time logs.
 

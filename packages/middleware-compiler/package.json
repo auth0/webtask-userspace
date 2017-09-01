@@ -7,7 +7,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "lab -vL"
+    "test": "lab -cvL -t 90"
   },
   "keywords": [],
   "author": "Geoff Goodman (https://github.com/ggoodman)",
@@ -16,6 +16,9 @@
     "wreck": "^12.2.3"
   },
   "devDependencies": {
-    "lab": "^14.2.0"
+    "@webtask/bearer-auth-middleware": "^1.1.1",
+    "body-parser": "^1.17.2",
+    "lab": "^14.2.0",
+    "shot": "^3.4.2"
   }
 }
