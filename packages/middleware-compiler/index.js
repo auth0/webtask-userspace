@@ -78,17 +78,13 @@ function middlewareCompiler(options, cb) {
             }
 
             const middlewareSpec = middlewareSpecs[nextMiddlewareIdx];
-
-            debuglog(
-                'Invoking middleware %d: %s',
-                nextMiddlewareIdx,
-                middlewareSpec.name || middlewareSpec
-            );
-
-            nextMiddlewareIdx++;
-
-            try {
-                const middlewareFn = Util.resolveCompiler(middlewareSpec);
+            const middlewareIdx = nextMiddlewareIdx++;
+            const invokeMiddlewareFn = middlewareFn => {
+                debuglog(
+                    'Invoking middleware %d: %s',
+                    middlewareIdx,
+                    middlewareSpec.name || middlewareSpec
+                );
 
                 try {
                     return middlewareFn(req, res, invokeNextMiddleware);
@@ -101,15 +97,28 @@ function middlewareCompiler(options, cb) {
 
                     return respondWithError(e, res);
                 }
-            } catch (e) {
-                debuglog(
-                    'Error loading middleware "%s": %s',
-                    middlewareSpec,
-                    e.stack || e
-                );
+            };
 
-                return respondWithError(e, res);
+            // The middleware is either automatic (default) or has been cached so we can immediately run it
+            if (typeof middlewareSpec === 'function') {
+                return invokeMiddlewareFn(middlewareSpec);
             }
+
+            return Util.resolveMiddlewareFunction(
+                middlewareSpec,
+                { debuglog, nodejsCompiler },
+                (error, middlewareFn) => {
+                    if (error) {
+                        return respondWithError(error, res);
+                    }
+
+                    // Cache the resulting middleware for the next invocation.
+                    // Util.resolveMiddlewareFunction operates as an identify function for function arguments.
+                    middlewareSpecs[middlewareIdx] = middlewareFn;
+
+                    return invokeMiddlewareFn(middlewareFn);
+                }
+            );
         }
 
         function respondWithError(error, res) {
