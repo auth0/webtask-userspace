@@ -76,7 +76,7 @@ describe('middleware spec loader', { parallel: true }, () => {
             'succeeds loading a middleware function from a url',
             (done, onCleanUp) => {
                 const middleware = `
-                    module.exports = (req, res, next) => next();
+                    module.exports = () => (req, res, next) => next();
                 `;
                 return spawnServer(middleware, (error, server) => {
                     Assert.ifError(error);

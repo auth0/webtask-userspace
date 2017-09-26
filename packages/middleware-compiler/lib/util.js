@@ -118,11 +118,25 @@ function resolveUrlMiddlewareFunction(url, options, cb) {
 
         const middlewareCode = payload.toString('utf-8');
 
-        return nodejsCompiler(middlewareCode, (error, middlewareFn) => {
+        return nodejsCompiler(middlewareCode, (error, middlewareFactoryFn) => {
             if (error) {
                 debuglog('Error compiling webtask code: %s', error.stack);
 
                 return cb(error);
+            }
+
+            let middlewareFn;
+
+            try {
+                middlewareFn = middlewareFactoryFn();
+            } catch (e) {
+                debuglog(
+                    'The middleware factory function exported by the code at "%s" generated an uncaught exception when invoked: %s',
+                    url,
+                    e.message
+                );
+
+                return cb(e);
             }
 
             try {

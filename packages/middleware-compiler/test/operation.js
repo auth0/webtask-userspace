@@ -424,7 +424,7 @@ describe('middleware compiler operation', { parallel: true }, () => {
             (done, onCleanup) => {
                 const script = `module.exports = cb => cb(null, 'OK');`;
                 const middleware = `
-                    module.exports = (req, res, next) => next();
+                    module.exports = () => (req, res, next) => next();
                 `;
                 return Helpers.spawnServer(middleware, (error, server) => {
                     Assert.ifError(error);
@@ -463,7 +463,7 @@ describe('middleware compiler operation', { parallel: true }, () => {
             (done, onCleanup) => {
                 const script = `module.exports = cb => cb(null, 'OK');`;
                 const middleware = `
-                    module.exports = (req, res, next) => { res.writeHead(200); res.end('MIDDLEWARE'); };
+                    module.exports = () => (req, res, next) => { res.writeHead(200); res.end('MIDDLEWARE'); };
                 `;
                 return Helpers.spawnServer(middleware, (error, server) => {
                     Assert.ifError(error);
