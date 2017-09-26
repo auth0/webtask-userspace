@@ -18,14 +18,10 @@ module.exports = {
 function createDefaultMiddleware(options) {
     Assert.ok(options);
     Assert.ok(options.debuglog);
-    Assert.ok(options.nodejsCompiler);
     Assert.ok(options.respondWithError);
-    Assert.ok(options.script);
 
     const debuglog = options.debuglog;
-    const nodejsCompiler = options.nodejsCompiler;
     const respondWithError = options.respondWithError;
-    const script = options.script;
 
     let cachedWebtaskAdapter;
     let Wreck;
@@ -36,6 +32,9 @@ function createDefaultMiddleware(options) {
 
             return cachedWebtaskAdapter(req, res);
         }
+
+        const nodejsCompiler = req.webtaskContext.compiler.nodejsCompiler;
+        const script = req.webtaskContext.compiler.script;
 
         return nodejsCompiler(script, (error, webtaskFn) => {
             if (error) {

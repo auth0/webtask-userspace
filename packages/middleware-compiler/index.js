@@ -47,9 +47,7 @@ function middlewareCompiler(options, cb) {
     return cb(null, function middlewarePipeline(ctx, req, res) {
         const defaultMiddleware = Middleware.createDefaultMiddleware({
             debuglog,
-            nodejsCompiler,
             respondWithError,
-            script,
         });
 
         // Add a final middleware that will invoke the webtaskFunction
