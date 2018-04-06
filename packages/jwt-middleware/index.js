@@ -9,17 +9,16 @@ const WT_AUTH_EXEC = 'wt-authorize-execution';
 
 module.exports = () => {
 
-    Assert.ok(module.webtask.meta['iss'], 'The iss meta is required for the ExpressJwt');
-    Assert.ok(module.webtask.meta['aud'], 'The aud meta is required for the ExpressJwt');
+    return function(req, res, next) {
 
-    const iss = module.webtask.meta['iss'];
-    const aud = module.webtask.meta['aud'];
-
-    return function(req, res, next) { 
+        const ctx = req.webtaskContext;
+    
+        const iss = ctx.meta['iss'];
+        const aud = ctx.meta['aud'];
 
         // if wt-authorize-execution is set to true (non-zero) then proceed with authn and authz
 
-        if (module.webtask.meta[WT_AUTH_EXEC] && module.webtask.meta[WT_AUTH_EXEC] !== "0"){
+        if (ctx.meta[WT_AUTH_EXEC] && ctx.meta[WT_AUTH_EXEC] !== "0"){
 
             if (req.headers['authorization']) {
 
@@ -31,6 +30,7 @@ module.exports = () => {
 
                 try {
                     jwt = jws.decode(match[1]);
+                    if (!jwt) throw new Error();
                 } catch(e){
                     const error = new Error('Invalid authorization header');
                     error.statusCode = 401;
@@ -40,7 +40,7 @@ module.exports = () => {
                 if (
                     jwt.payload.scope.indexOf("wt:admin") === -1 
                     && jwt.payload.scope.indexOf(`wt:owner:${req.x_wt.container}`) === -1
-                    && jwt.payload.scope.indexOf(module.webtask.meta['wt-execution-scope']) === -1
+                    && jwt.payload.scope.indexOf(ctx.meta['wt-execution-scope']) === -1
                 ) {
                     const error = new Error('Missing required scopes');
                     error.statusCode = 401;
@@ -78,7 +78,7 @@ module.exports = () => {
                 return next(error);
             }
         }
-        
+
         // authn and authz not required
         return next();
     };

@@ -16,6 +16,12 @@
     "jwks-rsa": "1.2.1",
     "jws": "3.1.4"
   },
+  "devDependencies": {
+    "crypto": "1.0.1",
+    "hoek": "^4.2.0",
+    "lab": "^14.2.0",
+    "shot": "^3.4.2"
+  },
   "engines": {
     "node": ">=0.4.0"
   },
