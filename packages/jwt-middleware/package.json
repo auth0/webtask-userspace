@@ -12,15 +12,15 @@
     "url": "https://auth0.com/"
   },
   "dependencies": {
-    "express-jwt": "5.3.1",
-    "jwks-rsa": "1.2.1",
-    "jws": "3.1.4"
+    "express-jwt": "^5.3.1",
+    "jwks-rsa": "^1.2.1",
+    "jsonwebtoken":"^8.2.1"
   },
   "devDependencies": {
-    "crypto": "1.0.1",
     "hoek": "^4.2.0",
     "lab": "^14.2.0",
-    "shot": "^3.4.2"
+    "shot": "^3.4.2",
+    "express": "^4.16.3"
   },
   "engines": {
     "node": ">=0.4.0"
