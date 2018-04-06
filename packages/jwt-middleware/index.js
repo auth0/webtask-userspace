@@ -37,6 +37,8 @@ module.exports = () => {
                     return next(error);
                 }
 
+                // verify claims
+
                 if (
                     jwt.payload.scope.indexOf("wt:admin") === -1 
                     && jwt.payload.scope.indexOf(`wt:owner:${req.x_wt.container}`) === -1
@@ -54,6 +56,7 @@ module.exports = () => {
             }
 
             // verify if token is correctly signed and has correct aud/iss fields
+            
             try {
 
                 const loadRsaKey = JwksRsa.expressJwtSecret({

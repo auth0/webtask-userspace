@@ -83,8 +83,6 @@ describe('JWT middleware operation', { parallel: false }, () => {
         const run = createMockRunner({
             meta: {
                 "wt-authorize-execution": "1"
-                //'iss': 'https://test.run.webtask.io/self-hosted-issuer/',
-                //'aud': 'https://test.auth0-extend.com/'
             }
         });
 
