@@ -90,10 +90,18 @@ function createMiddleware(req) {
                             // verify claims
                             const scope = jwt.scope.split(' ');
 
+                            let meta_exec_not_found;
+
+                            if (ctx.meta[WT_META_EXEC_SCOPE]) {
+                                scope.indexOf(ctx.meta[WT_META_EXEC_SCOPE]) === -1 ? meta_exec_not_found = true : meta_exec_not_found = false;
+                            } else {
+                                meta_exec_not_found = true;
+                            }
+
                             if (
                                 scope.indexOf(WT_META_ADMIN_SCOPE) === -1 
                                 && scope.indexOf(`wt:owner:${req.x_wt.container}`) === -1
-                                && scope.indexOf(ctx.meta[WT_META_EXEC_SCOPE]) === -1
+                                && meta_exec_not_found
                             ) {
                                 const error = new Error('UnauthorizedError');
                                 error.statusCode = 403;

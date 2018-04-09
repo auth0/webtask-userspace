@@ -17,15 +17,15 @@ This middleware allows you to secure execution of a webtask using JWT tokens by 
 
 3. Set the `wt-middleware` metadata property to `@webtask/jwt-middleware`.
 
-4. Set the `wt-authorize-execution` metadata property to any value other than `0` to secure the webtask.  Value of `0` or missing `wt-authorize-execution` metadata property will result in the webtask execution being unsecure.
+4. Set the `wt-authorize-execution` metadata property to any value other than `0` to require either the `wt:owner:<container>` or `wt:admin` or the custom scope encoded in the `wt-execution-scope` metadata property.  Value of `0` or missing `wt-authorize-execution` metadata property will result in the webtask execution being unsecure.
 
-5. Set the `wt-execution-iss` metadata property to the value of `authorization_server` property obtained from the discovery endpoint of your deployment (located at `{deployment_url}//api/description`).
+5. Set the `wt-execution-iss` metadata property to the value of `authorization_server` property obtained from the discovery endpoint of your deployment (located at `{deployment_url}/api/description`).
 
-6. Set the `wt-execution-aud` metadata property to the value of `audience` property obtained from the discovery endpoint of your deployment (located at `{deployment_url}//api/description`).
+6. Set the `wt-execution-aud` metadata property to the value of `audience` property obtained from the discovery endpoint of your deployment (located at `{deployment_url}/api/description`).
 
 7. *Optionally*, set the `wt-execution-scope` metadata property to the name of a custom scope that can be used for authorization of webtask execution.
 
-8. *Optionally*, set the `wt-debug` metadata property to a comma-separated list of debug references that contains `wt-middleware`. This will result in additional debug information being sent to real-time logs.
+8. *Optionally*, set the `wt-debug` metadata property to a comma-separated list of debug references that contains `wt-middleware`. This will disable any authorization checks for the execution of the webtask.
 
 ## Creating and securing a webtask using CLI
 
