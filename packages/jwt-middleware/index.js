@@ -44,7 +44,8 @@ function createMiddleware(req) {
         algorithms: ['RS256'],
         audience: aud,
         issuer: iss,
-        secret: loadRsaKey
+        secret: loadRsaKey,
+        maxAge: '1h'
     });
 
     return function(req, res, next) {
