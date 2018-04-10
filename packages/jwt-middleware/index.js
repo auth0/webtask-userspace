@@ -2,7 +2,6 @@
 
 const Assert = require('assert');
 const ExpressJwt = require('express-jwt');
-const jsonwebtoken = require('jsonwebtoken');
 const JwksRsa = require('jwks-rsa');
 
 const WT_AUTH_EXEC = 'wt-authorize-execution';
@@ -73,22 +72,7 @@ function createMiddleware(req) {
                         } else {
 
                             // authorization
-
-                            const match = (req.headers[AUTHZ] || '').trim().match(BEARER);
-
-                            let jwt;
-
-                            try {
-                                jwt = jsonwebtoken.decode(match[1]);
-                                if (!jwt) throw new Error();
-                            } catch(e){
-                                const error = new Error('UnauthorizedError');
-                                error.statusCode = 401;
-                                return next(error);
-                            }
-
-                            // verify claims
-                            const scope = jwt.scope.split(' ');
+                            const scope = req.user.scope.split(' ');
 
                             let meta_exec_not_found;
 
