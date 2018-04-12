@@ -4,7 +4,8 @@
   "description": "Webtask middleware for authenticating execution using JWT V2 token",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "preversion": "npm run test",
+    "test": "lab -cvL"
   },
   "author": {
     "name": "Leszek Zychowski",
