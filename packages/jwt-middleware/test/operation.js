@@ -80,7 +80,6 @@ describe('JWT middleware operation', { parallel: false }, () => {
     });
 
     it ('shoud throw error if wt-authorize-execution is set and no authorization header is present', done => {
-        const token =  Crypto.randomBytes(32).toString('hex');
         const run = createMockRunner({
             meta: {
                 "wt-authorize-execution": "1"
@@ -141,7 +140,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
         });
 
         const app = Express();
-        
+
         app.get('/', (req, res) => {
             res.json(json);
         });
@@ -155,7 +154,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
                 },
                 error => {
                     Assert.ifError(error);
-    
+
                     return server.close(() => done());
                 }
             );
@@ -180,7 +179,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
         });
 
         const app = Express();
-        
+
         app.get('/', (req, res) => {
             res.json(json);
         });
@@ -194,7 +193,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
                 },
                 error => {
                     Assert.ifError(error);
-    
+
                     return server.close(() => done());
                 }
             );
@@ -220,7 +219,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
         });
 
         const app = Express();
-        
+
         app.get('/', (req, res) => {
             res.json(json);
         });
@@ -234,7 +233,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
                 },
                 error => {
                     Assert.ifError(error);
-    
+
                     return server.close(() => done());
                 }
             );
@@ -259,7 +258,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
         });
 
         const app = Express();
-        
+
         app.get('/', (req, res) => {
             res.json(json);
         });
@@ -274,7 +273,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
                 error => {
                     Assert.ok(error);
                     Assert.equal(error.statusCode, 401);
-    
+
                     return server.close(() => done());
                 }
             );
@@ -299,7 +298,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
         });
 
         const app = Express();
-        
+
         app.get('/', (req, res) => {
             res.json(json);
         });
@@ -314,7 +313,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
                 error => {
                     Assert.ok(error);
                     Assert.equal(error.statusCode, 401);
-    
+
                     return server.close(() => done());
                 }
             );
@@ -339,7 +338,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
         });
 
         const app = Express();
-        
+
         app.get('/', (req, res) => {
             res.json(json);
         });
@@ -354,7 +353,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
                 error => {
                     Assert.ok(error);
                     Assert.equal(error.statusCode, 403);
-    
+
                     return server.close(() => done());
                 }
             );
@@ -379,7 +378,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
         });
 
         const app = Express();
-        
+
         app.get('/', (req, res) => {
             res.json(json);
         });
@@ -394,7 +393,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
                 error => {
                     Assert.ok(error);
                     Assert.equal(error.statusCode, 403);
-    
+
                     return server.close(() => done());
                 }
             );
@@ -403,7 +402,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
 
     it ('should fail due to expired token', done => {
 
-        const token = generateToken('wt:admin', 'http://127.0.0.1:9006/', WT_AUD, new Date('2000'));
+        const token = generateToken('wt:admin', 'http://127.0.0.1:9006/', WT_AUD, -5000);
 
         const run = createMockRunner({
             meta: {
@@ -419,7 +418,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
         });
 
         const app = Express();
-        
+
         app.get('/', (req, res) => {
             res.json(json);
         });
@@ -434,7 +433,7 @@ describe('JWT middleware operation', { parallel: false }, () => {
                 error => {
                     Assert.ok(error);
                     Assert.equal(error.statusCode, 401);
-    
+
                     return server.close(() => done());
                 }
             );
@@ -481,15 +480,20 @@ if (require.main === module){
     Lab.report([lab], { output: process.stdout, progress: 2});
 }
 
-function generateToken(scopes, iss, aud, date){
-    var sandbox_key = fs.readFileSync(path.join(__dirname, './key.pem'));
+function generateToken(scopes, iss, aud, expiresIn){
+    const now = Date.now();
+    const sandbox_key = fs.readFileSync(path.join(__dirname, './key.pem'));
+
+    // By default, create a token expiring in 5s
+    if (expiresIn === undefined) expiresIn = 5000;
 
     return jwt.sign({
         sub: "test", // or any other unique identifier representing the caller, for auditing purposes
         iss: iss,
         aud: aud,
         scope: scopes,
-        iat: (date) ? Math.floor(date.getTime() / 1000) : Math.floor(Date.now() / 1000)
+        iat: Math.floor(now / 1000),
+        exp: Math.round((now + expiresIn) / 1000)
     }, sandbox_key, {
         algorithm: 'RS256',
         keyid: process.env.CURRENT_KEYSET || 'test'
