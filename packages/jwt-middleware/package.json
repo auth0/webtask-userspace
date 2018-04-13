@@ -1,0 +1,34 @@
+{
+  "name": "@webtask/jwt-middleware",
+  "version": "1.0.0",
+  "description": "Webtask middleware for authenticating execution using JWT V2 token",
+  "main": "index.js",
+  "scripts": {
+    "preversion": "npm run test",
+    "test": "lab -cvL"
+  },
+  "author": {
+    "name": "Leszek Zychowski",
+    "email": "les.zychowski@auth0.com",
+    "url": "https://auth0.com/"
+  },
+  "dependencies": {
+    "express-jwt": "^5.3.1",
+    "jwks-rsa": "^1.2.1"
+  },
+  "devDependencies": {
+    "hoek": "^4.2.0",
+    "lab": "^14.2.0",
+    "shot": "^3.4.2",
+    "express": "^4.16.3"
+  },
+  "engines": {
+    "node": ">=0.4.0"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://www.opensource.org/licenses/MIT"
+    }
+  ]
+}
