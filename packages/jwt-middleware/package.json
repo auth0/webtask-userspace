@@ -1,6 +1,6 @@
 {
   "name": "@webtask/jwt-middleware",
-  "version": "1.0.0",
+  "version": "1.4.0",
   "description": "Webtask middleware for authenticating execution using JWT V2 token",
   "main": "index.js",
   "scripts": {
@@ -17,10 +17,10 @@
     "jwks-rsa": "^1.2.1"
   },
   "devDependencies": {
+    "express": "^4.16.3",
     "hoek": "^4.2.0",
     "lab": "^14.2.0",
-    "shot": "^3.4.2",
-    "express": "^4.16.3"
+    "shot": "^3.4.2"
   },
   "engines": {
     "node": ">=0.4.0"
