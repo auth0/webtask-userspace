@@ -6,12 +6,12 @@ This middleware allows you to secure execution of a webtask using JWT tokens by 
 
 1. Set the `wt-node-dependencies` metadata property to the stringified JSON of an object with names of modules as the keys and values set to the latest version for the corresponding module.
 
-```
-{
-    "@webtask/middleware-compiler": "1.3.0", 
-    "@webtask/jwt-middleware": "1.0.0"
-}
-```
+    ```
+    {
+        "@webtask/middleware-compiler": "1.3.0", 
+        "@webtask/jwt-middleware": "1.0.0"
+    }
+    ```
 
 2. Set the `wt-compiler` metadata property on your webtask to `@webtask/middleware-compiler`.
 
@@ -35,14 +35,14 @@ This middleware allows you to secure execution of a webtask using JWT tokens by 
 
 3. In the same folder create a file `meta` with all the metadata properties. Each property should be on its own line structured as `KEY=VALUE` pair.
 
-```
-wt-authorize-execution=1
-wt-node-dependencies={"@webtask/middleware-compiler":"^1.3.0","@webtask/jwt-middleware":"^1.0.0"}
-wt-compiler=@webtask/middleware-compiler
-wt-middleware=@webtask/jwt-middleware
-wt-execution-iss={ISSUER_URI}
-wt-execution-aud={AUDIENCE_URI}
-wt-execution-scope={EXECUTION_SCOPE}
-```
+    ```
+    wt-authorize-execution=1
+    wt-node-dependencies={"@webtask/middleware-compiler":"^1.3.0","@webtask/jwt-middleware":"^1.0.0"}
+    wt-compiler=@webtask/middleware-compiler
+    wt-middleware=@webtask/jwt-middleware
+    wt-execution-iss={ISSUER_URI}
+    wt-execution-aud={AUDIENCE_URI}
+    wt-execution-scope={EXECUTION_SCOPE}
+    ```
 
 4. Run the create command `wt create hello.js --meta-file meta -p {profile_name}`.
