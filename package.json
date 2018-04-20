@@ -20,6 +20,6 @@
   "homepage": "https://github.com/auth0/webtask-userspace#readme",
   "devDependencies": {
     "eslint": "^4.4.1",
-    "lerna": "^2.0.0"
+    "lerna": "^2.10.2"
   }
 }
