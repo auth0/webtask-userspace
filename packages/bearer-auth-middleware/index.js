@@ -11,7 +11,7 @@ function createAuthenticationMiddleware() {
         if (ctx.secrets && ctx.secrets[AUTH_SECRET_NAME]) {
             const match = (ctx.headers['authorization'] || '')
                 .trim()
-                .match(/^bearer (.+)$/i);
+                .match(/^bearer\s+(.+[^\s-])\s*$/i);
 
             if (match && match[1] === ctx.secrets[AUTH_SECRET_NAME]) {
                 return next();
