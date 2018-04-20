@@ -1,6 +1,6 @@
 {
   "name": "@webtask/jwt-middleware",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Webtask middleware for authenticating execution using JWT V2 token",
   "main": "index.js",
   "scripts": {
