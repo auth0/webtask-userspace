@@ -14,12 +14,13 @@
   },
   "dependencies": {
     "express-jwt": "^5.3.1",
-    "jwks-rsa": "^1.2.1"
+    "jwks-rsa": "^1.2.1",
+    "wreck": "^12.5.1"
   },
   "devDependencies": {
     "express": "^4.16.3",
-    "hoek": "^4.2.0",
-    "lab": "^14.2.0",
+    "hoek": "^4.2.1",
+    "lab": "^14.3.4",
     "shot": "^3.4.2"
   },
   "engines": {
