@@ -1,6 +1,6 @@
 {
   "name": "@webtask/bearer-auth-middleware",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "Webtask middleware that implements generic bearer token authentication",
   "main": "index.js",
   "scripts": {
