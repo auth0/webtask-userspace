@@ -14,8 +14,8 @@
     "@webtask/middleware-compiler": "^1.0.0"
   },
   "devDependencies": {
-    "hoek": "^4.2.0",
-    "lab": "^14.2.0",
+    "hoek": "^4.2.1",
+    "lab": "^14.3.4",
     "shot": "^3.4.2"
   }
 }

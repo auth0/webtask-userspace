@@ -22,253 +22,108 @@ const WT_AUD = 'http://127.0.0.1:8721/';
 const cert = fs.readFileSync(path.join(__dirname, './cert.pem'));
 
 const json = {
-    "keys": [
+    keys: [
         {
-            "alg": "RSA256",
-            "kty": "RSA",
-            "use": "sig",
-            "x5c": [cert.toString()],
-            "kid": "test"
-        }
-    ]
+            alg: 'RSA256',
+            kty: 'RSA',
+            use: 'sig',
+            x5c: [cert.toString()],
+            kid: 'test',
+        },
+    ],
 };
 
 module.exports = { lab };
 
 describe('JWT middleware operation', { parallel: false }, () => {
+    let nextPort = 9000;
 
-    it ('shoud skip authn and authz if no wt-authorize-execution is present', done => {
-        const token =  Crypto.randomBytes(32).toString('hex');
+    it('should skip authn and authz if no wt-authorize-execution is present', done => {
+        const token = Crypto.randomBytes(32).toString('hex');
         const run = createMockRunner({
-            meta: {}
+            meta: {},
         });
 
         return run(
             {
                 headers: {
-                    authorization: `Bearer ${token}`
-                }
+                    authorization: `Bearer ${token}`,
+                },
             },
             error => {
-                Assert.ifError(error);
-
-                return done();
+                return done(error);
             }
-        )
+        );
     });
 
-    it ('shoud skip authn and authz if wt-authorize-execution is set to 0', done => {
-        const token =  Crypto.randomBytes(32).toString('hex');
+    it('should skip authn and authz if wt-authorize-execution is set to 0', done => {
+        const token = Crypto.randomBytes(32).toString('hex');
         const run = createMockRunner({
             meta: {
-                "wt-authorize-execution": "0"
-            }
+                'wt-authorize-execution': '0',
+            },
         });
 
         return run(
             {
                 headers: {
-                    authorization: `Bearer ${token}`
-                }
+                    authorization: `Bearer ${token}`,
+                },
             },
             error => {
-                Assert.ifError(error);
-
-                return done();
+                return done(error);
             }
-        )
+        );
     });
 
-    it ('shoud throw error if wt-authorize-execution is set and no authorization header is present', done => {
+    it('should throw error if wt-authorize-execution is set and no authorization header is present', done => {
         const run = createMockRunner({
             meta: {
-                "wt-authorize-execution": "1"
-            }
+                'wt-authorize-execution': '1',
+            },
         });
 
         return run(
             {
-                headers: {}
+                headers: {},
             },
             error => {
                 Assert.ok(error);
-                Assert.equal(error.statusCode, 401);
+                Assert.ok(error.name.match(/AssertionError/));
 
                 return done();
             }
-        )
+        );
     });
 
-    it ('shoud throw error if token is not a real JWT token', done => {
-        const token =  Crypto.randomBytes(32).toString('hex');
+    it('should throw error if token is not a real JWT token', done => {
+        const port = nextPort++;
+        const token = Crypto.randomBytes(32).toString('hex');
         const run = createMockRunner({
             meta: {
-                "wt-authorize-execution": "1"
-            }
-        });
-
-        return run(
-            {
-                headers: {
-                    authorization: `Bearer ${token}`
-                }
+                'wt-execution-iss': `http://127.0.0.1:${port}/`,
+                'wt-execution-aud': WT_AUD,
+                'wt-authorize-execution': '1',
             },
-            error => {
-                Assert.ok(error);
-                Assert.equal(error.statusCode, 401);
-
-                return done();
-            }
-        )
-    });
-
-    it ('should authenticate and authorize with correct token and admin scope', done => {
-
-        const token = generateToken('wt:admin', 'http://127.0.0.1:9000/', WT_AUD);
-
-        const run = createMockRunner({
-            meta: {
-                "wt-execution-iss": 'http://127.0.0.1:9000/',
-                "wt-execution-aud": WT_AUD,
-                "wt-authorize-execution": "1"
-            }
-        },
-        {
-            "x_wt": {
-                "container": "test_container"
-            }
         });
 
         const app = Express();
 
-        app.get('/', (req, res) => {
+        app.get('/.well-known/openid-configuration', (req, res) => {
+            res.json({
+                jwks_uri: `http://127.0.0.1:${port}/.well-known/jwks.json`,
+            });
+        });
+        app.get('/.well-known/jwks.json', (req, res) => {
             res.json(json);
         });
 
-        const server = app.listen(9000, '127.0.0.1', () => {
+        const server = app.listen(port, '127.0.0.1', () => {
             return run(
                 {
                     headers: {
-                        authorization: `Bearer ${token}`
-                    }
-                },
-                error => {
-                    Assert.ifError(error);
-
-                    return server.close(() => done());
-                }
-            );
-        });
-    });
-
-    it ('should authenticate and authorize with correct token and owner scope', done => {
-
-        const token = generateToken('wt:owner:test_container', 'http://127.0.0.1:9004/', WT_AUD);
-
-        const run = createMockRunner({
-            meta: {
-                "wt-execution-iss": 'http://127.0.0.1:9004/',
-                "wt-execution-aud": WT_AUD,
-                "wt-authorize-execution": "1"
-            }
-        },
-        {
-            "x_wt": {
-                "container": "test_container"
-            }
-        });
-
-        const app = Express();
-
-        app.get('/', (req, res) => {
-            res.json(json);
-        });
-
-        const server = app.listen(9004, '127.0.0.1', () => {
-            return run(
-                {
-                    headers: {
-                        authorization: `Bearer ${token}`
-                    }
-                },
-                error => {
-                    Assert.ifError(error);
-
-                    return server.close(() => done());
-                }
-            );
-        });
-    });
-
-    it ('should authenticate and authorize with correct token and custom wt-execution-scope', done => {
-
-        const token = generateToken('wt:custom_execution', 'http://127.0.0.1:9007/', WT_AUD);
-
-        const run = createMockRunner({
-            meta: {
-                "wt-execution-iss": 'http://127.0.0.1:9007/',
-                "wt-execution-aud": WT_AUD,
-                "wt-authorize-execution": "1",
-                "wt-execution-scope": "wt:custom_execution"
-            }
-        },
-        {
-            "x_wt": {
-                "container": "test_container"
-            }
-        });
-
-        const app = Express();
-
-        app.get('/', (req, res) => {
-            res.json(json);
-        });
-
-        const server = app.listen(9007, '127.0.0.1', () => {
-            return run(
-                {
-                    headers: {
-                        authorization: `Bearer ${token}`
-                    }
-                },
-                error => {
-                    Assert.ifError(error);
-
-                    return server.close(() => done());
-                }
-            );
-        });
-    });
-
-    it ('should fail authentication due to invalid audience', done => {
-
-        const token = generateToken('wt:admin', 'http://127.0.0.1:9001/', WT_AUD);
-
-        const run = createMockRunner({
-            meta: {
-                "wt-execution-iss": "http://127.0.0.1:9001/",
-                "wt-execution-aud": "http://google.com/",
-                "wt-authorize-execution": "1"
-            }
-        },
-        {
-            "x_wt": {
-                "container": "test_container"
-            }
-        });
-
-        const app = Express();
-
-        app.get('/', (req, res) => {
-            res.json(json);
-        });
-
-        const server = app.listen(9001, '127.0.0.1', () => {
-            return run(
-                {
-                    headers: {
-                        authorization: `Bearer ${token}`
-                    }
+                        authorization: `Bearer ${token}`,
+                    },
                 },
                 error => {
                     Assert.ok(error);
@@ -280,35 +135,238 @@ describe('JWT middleware operation', { parallel: false }, () => {
         });
     });
 
-    it ('should fail authentication due to invalid issuer', done => {
+    it('should authenticate and authorize with correct token and admin scope', done => {
+        const port = nextPort++;
+        const token = generateToken(
+            'wt:admin',
+            `http://127.0.0.1:${port}/`,
+            WT_AUD
+        );
 
+        const run = createMockRunner(
+            {
+                meta: {
+                    'wt-execution-iss': `http://127.0.0.1:${port}/`,
+                    'wt-execution-aud': WT_AUD,
+                    'wt-authorize-execution': '1',
+                },
+            },
+            {
+                x_wt: {
+                    container: 'test_container',
+                },
+            }
+        );
+
+        const app = Express();
+
+        app.get('/.well-known/openid-configuration', (req, res) => {
+            res.json({
+                jwks_uri: `http://127.0.0.1:${port}/.well-known/jwks.json`,
+            });
+        });
+        app.get('/.well-known/jwks.json', (req, res) => {
+            res.json(json);
+        });
+
+        const server = app.listen(port, '127.0.0.1', () => {
+            return run(
+                {
+                    headers: {
+                        authorization: `Bearer ${token}`,
+                    },
+                },
+                error => {
+                    return server.close(() => done(error));
+                }
+            );
+        });
+    });
+
+    it('should authenticate and authorize with correct token and owner scope', done => {
+        const port = nextPort++;
+        const token = generateToken(
+            'wt:owner:test_container',
+            `http://127.0.0.1:${port}/`,
+            WT_AUD
+        );
+
+        const run = createMockRunner(
+            {
+                meta: {
+                    'wt-execution-iss': `http://127.0.0.1:${port}/`,
+                    'wt-execution-aud': WT_AUD,
+                    'wt-authorize-execution': '1',
+                },
+            },
+            {
+                x_wt: {
+                    container: 'test_container',
+                },
+            }
+        );
+
+        const app = Express();
+
+        app.get('/.well-known/openid-configuration', (req, res) => {
+            res.json({
+                jwks_uri: `http://127.0.0.1:${port}/.well-known/jwks.json`,
+            });
+        });
+        app.get('/.well-known/jwks.json', (req, res) => {
+            res.json(json);
+        });
+
+        const server = app.listen(port, '127.0.0.1', () => {
+            return run(
+                {
+                    headers: {
+                        authorization: `Bearer ${token}`,
+                    },
+                },
+                error => {
+                    return server.close(() => done(error));
+                }
+            );
+        });
+    });
+
+    it('should authenticate and authorize with correct token and custom wt-execution-scope', done => {
+        const port = nextPort++;
+        const token = generateToken(
+            'wt:custom_execution',
+            `http://127.0.0.1:${port}/`,
+            WT_AUD
+        );
+
+        const run = createMockRunner(
+            {
+                meta: {
+                    'wt-execution-iss': `http://127.0.0.1:${port}/`,
+                    'wt-execution-aud': WT_AUD,
+                    'wt-authorize-execution': '1',
+                    'wt-execution-scope': 'wt:custom_execution',
+                },
+            },
+            {
+                x_wt: {
+                    container: 'test_container',
+                },
+            }
+        );
+
+        const app = Express();
+
+        app.get('/.well-known/openid-configuration', (req, res) => {
+            res.json({
+                jwks_uri: `http://127.0.0.1:${port}/.well-known/jwks.json`,
+            });
+        });
+        app.get('/.well-known/jwks.json', (req, res) => {
+            res.json(json);
+        });
+
+        const server = app.listen(port, '127.0.0.1', () => {
+            return run(
+                {
+                    headers: {
+                        authorization: `Bearer ${token}`,
+                    },
+                },
+                error => {
+                    return server.close(() => done(error));
+                }
+            );
+        });
+    });
+
+    it('should fail authentication due to invalid audience', done => {
+        const port = nextPort++;
+        const token = generateToken(
+            'wt:admin',
+            `http://127.0.0.1:${port}/`,
+            WT_AUD
+        );
+
+        const run = createMockRunner(
+            {
+                meta: {
+                    'wt-execution-iss': `http://127.0.0.1:${port}/`,
+                    'wt-execution-aud': 'http://google.com/',
+                    'wt-authorize-execution': '1',
+                },
+            },
+            {
+                x_wt: {
+                    container: 'test_container',
+                },
+            }
+        );
+
+        const app = Express();
+
+        app.get('/.well-known/openid-configuration', (req, res) => {
+            res.json({
+                jwks_uri: `http://127.0.0.1:${port}/.well-known/jwks.json`,
+            });
+        });
+        app.get('/.well-known/jwks.json', (req, res) => {
+            res.json(json);
+        });
+
+        const server = app.listen(port, '127.0.0.1', () => {
+            return run(
+                {
+                    headers: {
+                        authorization: `Bearer ${token}`,
+                    },
+                },
+                error => {
+                    Assert.ok(error);
+                    Assert.equal(error.statusCode, 401);
+
+                    return server.close(() => done());
+                }
+            );
+        });
+    });
+
+    it('should fail authentication due to invalid issuer', done => {
+        const port = nextPort++;
         const token = generateToken('wt:admin', 'http://google.com/', WT_AUD);
 
-        const run = createMockRunner({
-            meta: {
-                "wt-execution-iss": "http://127.0.0.1:9005/",
-                "wt-execution-aud": "http://google.com/",
-                "wt-authorize-execution": "1"
+        const run = createMockRunner(
+            {
+                meta: {
+                    'wt-execution-iss': `http://127.0.0.1:${port}/`,
+                    'wt-execution-aud': 'http://google.com/',
+                    'wt-authorize-execution': '1',
+                },
+            },
+            {
+                x_wt: {
+                    container: 'test_container',
+                },
             }
-        },
-        {
-            "x_wt": {
-                "container": "test_container"
-            }
-        });
+        );
 
         const app = Express();
 
-        app.get('/', (req, res) => {
+        app.get('/.well-known/openid-configuration', (req, res) => {
+            res.json({
+                jwks_uri: `http://127.0.0.1:${port}/.well-known/jwks.json`,
+            });
+        });
+        app.get('/.well-known/jwks.json', (req, res) => {
             res.json(json);
         });
 
-        const server = app.listen(9005, '127.0.0.1', () => {
+        const server = app.listen(port, '127.0.0.1', () => {
             return run(
                 {
                     headers: {
-                        authorization: `Bearer ${token}`
-                    }
+                        authorization: `Bearer ${token}`,
+                    },
                 },
                 error => {
                     Assert.ok(error);
@@ -320,35 +378,46 @@ describe('JWT middleware operation', { parallel: false }, () => {
         });
     });
 
-    it ('should fail due to missing scopes', done => {
+    it('should fail due to missing scopes', done => {
+        const port = nextPort++;
+        const token = generateToken(
+            'wt:not_existant_scope',
+            `http://127.0.0.1:${port}/`,
+            WT_AUD
+        );
 
-        const token = generateToken('wt:not_existant_scope', 'http://127.0.0.1:9002/', WT_AUD);
-
-        const run = createMockRunner({
-            meta: {
-                "wt-execution-iss": "http://127.0.0.1:9002/",
-                "wt-execution-aud": WT_AUD,
-                "wt-authorize-execution": "1"
+        const run = createMockRunner(
+            {
+                meta: {
+                    'wt-execution-iss': `http://127.0.0.1:${port}/`,
+                    'wt-execution-aud': WT_AUD,
+                    'wt-authorize-execution': '1',
+                },
+            },
+            {
+                x_wt: {
+                    container: 'test_container',
+                },
             }
-        },
-        {
-            "x_wt": {
-                "container": "test_container"
-            }
-        });
+        );
 
         const app = Express();
 
-        app.get('/', (req, res) => {
+        app.get('/.well-known/openid-configuration', (req, res) => {
+            res.json({
+                jwks_uri: `http://127.0.0.1:${port}/.well-known/jwks.json`,
+            });
+        });
+        app.get('/.well-known/jwks.json', (req, res) => {
             res.json(json);
         });
 
-        const server = app.listen(9002, '127.0.0.1', () => {
+        const server = app.listen(port, '127.0.0.1', () => {
             return run(
                 {
                     headers: {
-                        authorization: `Bearer ${token}`
-                    }
+                        authorization: `Bearer ${token}`,
+                    },
                 },
                 error => {
                     Assert.ok(error);
@@ -360,35 +429,46 @@ describe('JWT middleware operation', { parallel: false }, () => {
         });
     });
 
-    it ('should fail due to scope being a string superset of wt:admin while wt:admin is not present', done => {
+    it('should fail due to scope being a string superset of wt:admin while wt:admin is not present', done => {
+        const port = nextPort++;
+        const token = generateToken(
+            'wt:administrator wt:foo',
+            `http://127.0.0.1:${port}/`,
+            WT_AUD
+        );
 
-        const token = generateToken('wt:administrator wt:foo', 'http://127.0.0.1:9003/', WT_AUD);
-
-        const run = createMockRunner({
-            meta: {
-                "wt-execution-iss": "http://127.0.0.1:9003/",
-                "wt-execution-aud": WT_AUD,
-                "wt-authorize-execution": "1"
+        const run = createMockRunner(
+            {
+                meta: {
+                    'wt-execution-iss': `http://127.0.0.1:${port}/`,
+                    'wt-execution-aud': WT_AUD,
+                    'wt-authorize-execution': '1',
+                },
+            },
+            {
+                x_wt: {
+                    container: 'test_container',
+                },
             }
-        },
-        {
-            "x_wt": {
-                "container": "test_container"
-            }
-        });
+        );
 
         const app = Express();
 
-        app.get('/', (req, res) => {
+        app.get('/.well-known/openid-configuration', (req, res) => {
+            res.json({
+                jwks_uri: `http://127.0.0.1:${port}/.well-known/jwks.json`,
+            });
+        });
+        app.get('/.well-known/jwks.json', (req, res) => {
             res.json(json);
         });
 
-        const server = app.listen(9003, '127.0.0.1', () => {
+        const server = app.listen(port, '127.0.0.1', () => {
             return run(
                 {
                     headers: {
-                        authorization: `Bearer ${token}`
-                    }
+                        authorization: `Bearer ${token}`,
+                    },
                 },
                 error => {
                     Assert.ok(error);
@@ -400,35 +480,47 @@ describe('JWT middleware operation', { parallel: false }, () => {
         });
     });
 
-    it ('should fail due to expired token', done => {
+    it('should fail due to expired token', done => {
+        const port = nextPort++;
+        const token = generateToken(
+            'wt:admin',
+            `http://127.0.0.1:${port}/`,
+            WT_AUD,
+            -5000
+        );
 
-        const token = generateToken('wt:admin', 'http://127.0.0.1:9006/', WT_AUD, -5000);
-
-        const run = createMockRunner({
-            meta: {
-                "wt-execution-iss": "http://127.0.0.1:9006/",
-                "wt-execution-aud": WT_AUD,
-                "wt-authorize-execution": "1"
+        const run = createMockRunner(
+            {
+                meta: {
+                    'wt-execution-iss': `http://127.0.0.1:${port}/`,
+                    'wt-execution-aud': WT_AUD,
+                    'wt-authorize-execution': '1',
+                },
+            },
+            {
+                x_wt: {
+                    container: 'test_container',
+                },
             }
-        },
-        {
-            "x_wt": {
-                "container": "test_container"
-            }
-        });
+        );
 
         const app = Express();
 
-        app.get('/', (req, res) => {
+        app.get('/.well-known/openid-configuration', (req, res) => {
+            res.json({
+                jwks_uri: `http://127.0.0.1:${port}/.well-known/jwks.json`,
+            });
+        });
+        app.get('/.well-known/jwks.json', (req, res) => {
             res.json(json);
         });
 
-        const server = app.listen(9006, '127.0.0.1', () => {
+        const server = app.listen(port, '127.0.0.1', () => {
             return run(
                 {
                     headers: {
-                        authorization: `Bearer ${token}`
-                    }
+                        authorization: `Bearer ${token}`,
+                    },
                 },
                 error => {
                     Assert.ok(error);
@@ -450,9 +542,8 @@ function createMockRunner(webtaskContext, customReq) {
     const jwtMiddlewareFn = JwtMiddleware();
 
     return function run(requestOptions, next) {
-
         const defaultWebtaskContext = {
-            headers: requestOptions.headers || {}
+            headers: requestOptions.headers || {},
         };
 
         const dispatchFn = (req, res) => {
@@ -463,39 +554,47 @@ function createMockRunner(webtaskContext, customReq) {
 
             if (customReq) req.x_wt = customReq.x_wt;
 
-            return jwtMiddlewareFn(req, res, next);
+            try {
+                return jwtMiddlewareFn(req, res, next);
+            } catch (err) {
+                return next(err);
+            }
         };
 
-        const defaultRequestOptions = { url: '/'};
+        const defaultRequestOptions = { url: '/' };
 
         return Shot.inject(
             dispatchFn,
             Hoek.applyToDefaults(defaultRequestOptions, requestOptions),
             res => Assert.fail(res, null, 'Unexpected response')
         );
-    }
+    };
 }
 
-if (require.main === module){
-    Lab.report([lab], { output: process.stdout, progress: 2});
+if (require.main === module) {
+    Lab.report([lab], { output: process.stdout, progress: 2 });
 }
 
-function generateToken(scopes, iss, aud, expiresIn){
+function generateToken(scopes, iss, aud, expiresIn) {
     const now = Date.now();
     const sandbox_key = fs.readFileSync(path.join(__dirname, './key.pem'));
 
     // By default, create a token expiring in 5s
     if (expiresIn === undefined) expiresIn = 5000;
 
-    return jwt.sign({
-        sub: "test", // or any other unique identifier representing the caller, for auditing purposes
-        iss: iss,
-        aud: aud,
-        scope: scopes,
-        iat: Math.floor(now / 1000),
-        exp: Math.round((now + expiresIn) / 1000)
-    }, sandbox_key, {
-        algorithm: 'RS256',
-        keyid: process.env.CURRENT_KEYSET || 'test'
-    });
+    return jwt.sign(
+        {
+            sub: 'test', // or any other unique identifier representing the caller, for auditing purposes
+            iss: iss,
+            aud: aud,
+            scope: scopes,
+            iat: Math.floor(now / 1000),
+            exp: Math.round((now + expiresIn) / 1000),
+        },
+        sandbox_key,
+        {
+            algorithm: 'RS256',
+            keyid: process.env.CURRENT_KEYSET || 'test',
+        }
+    );
 }
