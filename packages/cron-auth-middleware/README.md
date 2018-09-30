@@ -9,7 +9,7 @@ To use the cron auth middleware leverages the fact that the Webtask cron daemon 
 1. Set the `wt-node-dependencies` metadata property to the stringified JSON of an object having `@webtask/middleware-compiler` and `@webtask/cron-auth-middleware` properties whose values are the latest version of the [@webtask/middleware-compiler](../middleware-compiler) module and this module, respectively.
 
     ```json
-    {"@webtask/middleware-compiler":"1.1.0","@webtas/cron-auth-middleware":"1.1.0"}
+    {"@webtask/middleware-compiler":"1.1.0","@webtask/cron-auth-middleware":"1.1.0"}
     ```
 
 2. Set the `wt-compiler` metadata property on your webtask to `@webtask/middleware-compiler`.

@@ -9,7 +9,7 @@ To use the bearer auth middleware requires encoding a shared secret in the `wt-a
 1. Set the `wt-node-dependencies` metadata property to the stringified JSON of an object having `@webtask/middleware-compiler` and `@webtask/bearer-auth-middleware` properties whose values are the latest version of the [@webtask/middleware-compiler](../middleware-compiler) module and this module, respectively.
 
     ```json
-    {"@webtask/middleware-compiler":"1.1.0","@webtas/bearer-auth-middleware":"1.1.0"}
+    {"@webtask/middleware-compiler":"1.1.0","@webtask/bearer-auth-middleware":"1.1.0"}
     ```
 
 2. Set the `wt-compiler` metadata property on your webtask to `@webtask/middleware-compiler`.
