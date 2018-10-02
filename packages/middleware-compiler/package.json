@@ -7,7 +7,7 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "lab -cvL -t 90"
+    "test": "lab -cvL -t 90 --leaks"
   },
   "keywords": [],
   "author": "Geoff Goodman (https://github.com/ggoodman)",

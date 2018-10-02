@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "preversion": "npm run test",
-    "test": "lab -cvL"
+    "test": "lab -cvL --leaks"
   },
   "keywords": [],
   "author": "Geoff Goodman (https://github.com/ggoodman)",
