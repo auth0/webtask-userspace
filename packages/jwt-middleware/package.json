@@ -31,5 +31,8 @@
       "type": "MIT",
       "url": "http://www.opensource.org/licenses/MIT"
     }
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }

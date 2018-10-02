@@ -20,5 +20,8 @@
     "body-parser": "^1.17.2",
     "lab": "^14.2.0",
     "shot": "^3.4.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

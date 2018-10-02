@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "preversion": "npm run test",
-    "test": "lab -cvL"
+    "test": "lab -cvL --leaks"
   },
   "keywords": [],
   "author": "Auth0 Extend Team",
@@ -23,5 +23,8 @@
     "singleQuote": true,
     "trailingComma": "es5",
     "tabWidth": 2
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

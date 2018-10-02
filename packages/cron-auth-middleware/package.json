@@ -16,5 +16,8 @@
   "devDependencies": {
     "lab": "^14.2.0",
     "shot": "^3.4.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
