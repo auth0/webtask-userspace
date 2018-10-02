@@ -1,6 +1,6 @@
 {
   "name": "@webtask/cron-auth-middleware",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Webtask middleware that implements cron authentication",
   "main": "index.js",
   "scripts": {
