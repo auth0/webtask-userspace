@@ -1,0 +1,27 @@
+{
+  "name": "@webtask/optional-compiler-middleware",
+  "version": "1.0.0",
+  "description": "Webtask middleware that decorates the nodejsCompiler with optional compilation",
+  "main": "index.js",
+  "scripts": {
+    "preversion": "npm run test",
+    "test": "lab -cvL"
+  },
+  "keywords": [],
+  "author": "Auth0 Extend Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "@webtask/middleware-compiler": "^1.5.0"
+  },
+  "devDependencies": {
+    "hoek": "^4.2.1",
+    "lab": "^14.3.4",
+    "shot": "^3.4.2"
+  },
+  "prettier": {
+    "printWidth": 120,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "tabWidth": 2
+  }
+}

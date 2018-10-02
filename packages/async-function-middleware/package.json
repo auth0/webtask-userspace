@@ -1,0 +1,30 @@
+{
+  "name": "@webtask/async-function-middleware",
+  "version": "1.0.0",
+  "description": "Webtask middleware that implements an async function programming model",
+  "main": "index.js",
+  "scripts": {
+    "preversion": "npm run test",
+    "test": "lab -cvL"
+  },
+  "keywords": [],
+  "author": "Auth0 Extend Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "@webtask/middleware-compiler": "^1.5.0"
+  },
+  "dependencies": {
+    "@webtask/optional-compiler-middleware": "^1.0.0"
+  },
+  "devDependencies": {
+    "hoek": "^4.2.1",
+    "lab": "^14.3.4",
+    "shot": "^3.4.2"
+  },
+  "prettier": {
+    "printWidth": 120,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "tabWidth": 2
+  }
+}
