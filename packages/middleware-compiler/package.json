@@ -1,6 +1,6 @@
 {
   "name": "@webtask/middleware-compiler",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Webtask compiler that provides a configurable middleware pipeline",
   "main": "index.js",
   "directories": {
@@ -16,7 +16,7 @@
     "wreck": "^12.2.3"
   },
   "devDependencies": {
-    "@webtask/bearer-auth-middleware": "^1.5.0",
+    "@webtask/bearer-auth-middleware": "^1.5.1",
     "body-parser": "^1.17.2",
     "lab": "^14.2.0",
     "shot": "^3.4.2"
