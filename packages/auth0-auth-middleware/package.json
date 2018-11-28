@@ -1,0 +1,24 @@
+{
+  "name": "@webtask/auth0-auth-middleware",
+  "version": "1.0.0-pre.0",
+  "description": "Webtask middleware that implements auth0 authentication",
+  "main": "index.js",
+  "scripts": {
+    "preversion": "npm run test",
+    "test": "lab -cvL --threshold 90%"
+  },
+  "keywords": [],
+  "author": "Geoff Goodman (https://github.com/ggoodman)",
+  "license": "MIT",
+  "peerDependencies": {
+    "@webtask/middleware-compiler": "^1.0.0"
+  },
+  "devDependencies": {
+    "lab": "^14.2.0",
+    "shot": "^3.4.2"
+  },
+  "dependencies": {
+    "express-jwt": "^5.3.0",
+    "jwks-rsa": "^1.2.0"
+  }
+}
